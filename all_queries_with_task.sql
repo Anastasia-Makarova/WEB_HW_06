@@ -77,3 +77,21 @@ JOIN disciplines d ON d.discipline_id  = g.discipline_id
 JOIN teachers t ON t.teacher_id = d.teacher_id 
 WHERE s.student_id = 24 AND t.teacher_id = 1
 GROUP BY d.name ;
+
+--11 Середній бал, який певний викладач ставить певному студентові.
+SELECT t.fullname, s.fullname , ROUND(AVG(g.grade), 2) AS average_grade
+FROM teachers t 
+JOIN disciplines d ON d.teacher_id = t.teacher_id 
+JOIN grades g  ON g.discipline_id = d.discipline_id 
+JOIN students s ON s.student_id  = g.student_id 
+GROUP BY t.fullname  , s.fullname  ;
+
+--12 Оцінки студентів у певній групі з певного предмета на останньому занятті.
+SELECT sg.group_name, s.fullname, d.name, g.grade , g.date_of 
+FROM grades g 
+JOIN students s ON s.student_id = g.student_id 
+JOIN students_groups sg ON sg.group_id = s.group_id 
+JOIN disciplines d ON d.discipline_id = g.discipline_id 
+WHERE sg.group_id = 3 AND g.date_of = (SELECT MAX(g.date_of) FROM grades g)
+ORDER BY g.date_of DESC
+;
